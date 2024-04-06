@@ -62,4 +62,47 @@ Now, lets get to work.
 	}
 }
 ```
+![ec2-parameter](images/ec2p.png)
+The configuration file provided above outlines the metrics to be collected by the CloudWatch agent from an EC2 instance.  Here's a breakdown of what each part does:
+
+The "metrics" section defines the types of metrics that will be collected. Within this section:
+
+The "append_dimensions" subsection specifies additional dimensions to be included with the collected metrics. In this instance, it adds the instance ID as a dimension using the placeholder ${aws:InstanceId}.
+The "metrics_collected" section further details the metrics to be gathered. It includes:
+
+Configuration for memory-related metrics under "mem". This includes specifying the metric "mem_used_percent" to track memory usage percentage.
+Setting the interval for collecting these metrics to every 180 seconds (or 3 minutes).
+Similarly, disk-related metrics are configured under "disk". This includes:
+
+Specifying the metric "disk_used_percent" to monitor disk usage percentage.
+Setting the collection interval to 180 seconds, mirroring the frequency of memory metric collection.
+
+## Create an EC2 instance and attach the role created in Step 1
+After successfully setting up an IAM Role and creating a parameter within the AWS Systems Manager Console, our next step is to launch an EC2 instance and associate it with the previously created roles. It's important to highlight that the Systems Manager (SSM) will possess access to the parameter we generated. By attaching the role to the EC2 instance, it will also inherit access to these parameters."
+
+1. go to the EC2 console and select 'Instances.' Then, click on 'Launch Instance' located at the top right corner.
+
+2. Select the 'Amazon Linux 2' Amazon Machine Image (AMI) to launch the instance. During this process, ensure to attach the role created in the previous step
+![ec2-iam](images/ec2-iam.png)
+
+3. SSH into the instance, install CloudWatch agent. Create a file name script.sh and paste the shell script below
+```bash
+#!/bin/bash
+wget https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest/AmazonCloudWatchAgent.zip
+unzip AmazonCloudWatchAgent.zip
+sudo ./install.sh
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:/alarm/AWS-CWAgentLinConfig -s
+```
+make the file executable and run the file.
+
+![script](images/script.png)
+
+4. start the CloudWatch agent 
+```bash
+ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a start
+```
+5. Verify if CloudWatch is installed and running successfully
+```bash
+ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a status
+```
 
