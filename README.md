@@ -21,6 +21,9 @@ Granting an IAM role with both CloudWatchFullAccess and SSMFullAccess permission
 CloudWatchFullAccess enables monitoring of metrics, setting up alarms, and logging across various AWS services. It allows you to track performance, detect anomalies, and receive notifications for potential issues.
 
 SSMFullAccess complements CloudWatch by enabling action-taking based on CloudWatch metrics insights. It offers features like remote command execution, secure configuration management, and instance access without opening ports. These capabilities enhance operational automation and troubleshooting, ensuring efficient resource management.
+
+Now, lets get to work.
+
 1. navigate to the iam console then click on roles
 2. Click on Create role then select ec2 service on select trusted entity then click on `next`
 
