@@ -34,8 +34,27 @@ Now, lets get to work.
 
 ![ssmpolicy](images/ssmpolicy.png)
 4. Create Role
+5. Create  a new policy ec2:DescribeTags and attach it to our IAM role
+    Use the json code snippet below for your policy
+```bash
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeTags"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+This policy allows our IAM role permissions to perform the ec2:DescribeTags action
 
-## Create A parameter in Systen Manager
+![policy](images/policy.png)
+
+## Step 2: Create A parameter in System Manager
 1. Navigate to the AWS System Manager Console
 2. In the AWS System Manager navigate menu under Application management, select parameter store
 3. create a new parameter and paste the code snippet below
@@ -77,7 +96,7 @@ Similarly, disk-related metrics are configured under "disk". This includes:
 Specifying the metric "disk_used_percent" to monitor disk usage percentage.
 Setting the collection interval to 180 seconds, mirroring the frequency of memory metric collection.
 
-## Create an EC2 instance and attach the role created in Step 1
+##  Step 3: Create an EC2 instance and attach the role created in Step 1
 After successfully setting up an IAM Role and creating a parameter within the AWS Systems Manager Console, our next step is to launch an EC2 instance and associate it with the previously created roles. It's important to highlight that the Systems Manager (SSM) will possess access to the parameter we generated. By attaching the role to the EC2 instance, it will also inherit access to these parameters."
 
 1. go to the EC2 console and select 'Instances.' Then, click on 'Launch Instance' located at the top right corner.
@@ -105,4 +124,11 @@ make the file executable and run the file.
 ```bash
  sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a status
 ```
+![agent-running](images/CAgent.png)
+## STEP 4: Monitor Your Metric in CloudWatch
+- navigate to cloudwatch console. 
+- In the navigation menu select all metrics 
+- search for CWagent under the `browse` tab. you will see all the metrics data
+![metrics1](images/metrics1.png)
 
+![metrics2](images/metrics2.png)
